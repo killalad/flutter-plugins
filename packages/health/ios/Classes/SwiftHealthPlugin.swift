@@ -22,6 +22,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
     let BODY_MASS_INDEX = "BODY_MASS_INDEX"
     let BODY_TEMPERATURE = "BODY_TEMPERATURE"
     let ELECTRODERMAL_ACTIVITY = "ELECTRODERMAL_ACTIVITY"
+    let EXERCISE_TIME = "EXERCISE_TIME"
     let HEART_RATE = "HEART_RATE"
     let HEART_RATE_VARIABILITY_SDNN = "HEART_RATE_VARIABILITY_SDNN"
     let HEIGHT = "HEIGHT"
@@ -167,6 +168,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         unitDict[BODY_MASS_INDEX] = HKUnit.init(from: "")
         unitDict[BODY_TEMPERATURE] = HKUnit.degreeCelsius()
         unitDict[ELECTRODERMAL_ACTIVITY] = HKUnit.siemen()
+        unitDict[EXERCISE_TIME] = HKUnit.minute()
         unitDict[HEART_RATE] = HKUnit.init(from: "count/min")
         unitDict[HEART_RATE_VARIABILITY_SDNN] = HKUnit.secondUnit(with: .milli)
         unitDict[HEIGHT] = HKUnit.meter()
@@ -195,6 +197,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
             dataTypesDict[BODY_MASS_INDEX] = HKSampleType.quantityType(forIdentifier: .bodyMassIndex)!
             dataTypesDict[BODY_TEMPERATURE] = HKSampleType.quantityType(forIdentifier: .bodyTemperature)!
             dataTypesDict[ELECTRODERMAL_ACTIVITY] = HKSampleType.quantityType(forIdentifier: .electrodermalActivity)!
+            dataTypesDict[EXERCISE_TIME] = HKSampleType.quantityType(forIdentifier: .appleExerciseTime)!
             dataTypesDict[HEART_RATE] = HKSampleType.quantityType(forIdentifier: .heartRate)!
             dataTypesDict[HEART_RATE_VARIABILITY_SDNN] = HKSampleType.quantityType(forIdentifier: .heartRateVariabilitySDNN)!
             dataTypesDict[HEIGHT] = HKSampleType.quantityType(forIdentifier: .height)!
