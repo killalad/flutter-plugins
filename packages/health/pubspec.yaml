@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   device_info: ^0.4.2+8
+  equatable: ^1.2.6
 
 dev_dependencies:
   flutter_test:
@@ -27,4 +28,3 @@ flutter:
   plugin:
     androidPackage: cachet.plugins.health
     pluginClass: HealthPlugin
-

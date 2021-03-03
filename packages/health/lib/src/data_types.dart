@@ -35,6 +35,8 @@ enum HealthDataType {
   LOW_HEART_RATE_EVENT,
   IRREGULAR_HEART_RATE_EVENT,
   ELECTRODERMAL_ACTIVITY,
+
+  ECG,
 }
 
 /// List of data types available on iOS
@@ -68,6 +70,7 @@ const List<HealthDataType> _dataTypeKeysIOS = [
   HealthDataType.SLEEP_AWAKE,
   HealthDataType.SLEEP_ASLEEP,
   HealthDataType.WATER,
+  HealthDataType.ECG,
 ];
 
 /// List of data types available on Android
