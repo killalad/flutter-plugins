@@ -13,6 +13,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
     let healthStore = HKHealthStore()
     var quantityTypes: [String: HKQuantityTypeIdentifier] = [:]
     var categoryTypes: [String: HKCategoryTypeIdentifier] = [:]
+    var ecgSympoms = Set<HKCategoryTypeIdentifier>()
     var discreteList = [HKQuantityTypeIdentifier]()
     var unitDict: [String: HKUnit] = [:]
     
@@ -98,6 +99,9 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
             if (keyString == "ECG") {
                 if #available(iOS 14.0, *) {
                     typesToRequest.insert(HKObjectType.electrocardiogramType())
+                    for ecgSymptom in ecgSympoms {
+                        typesToRequest.insert(HKSampleType.categoryType(forIdentifier:ecgSymptom)!)
+                    }
                 }
             }
             else if(quantityTypes[keyString] != nil) {
@@ -143,17 +147,54 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                     return
                 }
                 let heartRateUnit: HKUnit = HKUnit.count().unitDivided(by: HKUnit.minute())
-                
-                result(ecgSamples.map { sample -> NSDictionary in
-                    return [
-                        "average": sample.averageHeartRate?.doubleValue(for: heartRateUnit) ?? 0.0,
-                        "samplingFrequency": sample.samplingFrequency?.doubleValue(for: HKUnit.hertz()) ?? 0.0,
-                        "classification": sample.classification.rawValue,
-                        "date_from": Int(sample.startDate.timeIntervalSince1970 * 1000),
-                        "date_to": Int(sample.endDate.timeIntervalSince1970 * 1000),
-                    ]
-                })
-                return
+                var returnDict = [NSDictionary]()
+                var i = 0
+                for ecgSample in ecgSamples {
+                    i += 1
+                    print(ecgSample)
+                    if(ecgSample.symptomsStatus.rawValue == 2) {
+                        
+                        var symptomsForCurrentEcg = Set<String>()
+                        var j = 0
+                        for symptom in self.ecgSympoms {
+                            let symptomQuery = HKSampleQuery(sampleType: HKSampleType.categoryType(forIdentifier:symptom)!, predicate: HKQuery.predicateForObjectsAssociated(electrocardiogram: ecgSample), limit: 1, sortDescriptors: nil) { (query, samples,error) in
+                                j += 1
+                                if(samples?.first != nil) {
+                                    symptomsForCurrentEcg.insert("\(samples!.first!.sampleType)")
+                                }
+                                if(j == self.ecgSympoms.count) {
+                                    returnDict.append( [
+                                        "average": ecgSample.averageHeartRate?.doubleValue(for: heartRateUnit) ?? 0.0,
+                                        "samplingFrequency": ecgSample.samplingFrequency?.doubleValue(for: HKUnit.hertz()) ?? 0.0,
+                                        "classification": ecgSample.classification.rawValue,
+                                        "date_from": Int(ecgSample.startDate.timeIntervalSince1970 * 1000),
+                                        "date_to": Int(ecgSample.endDate.timeIntervalSince1970 * 1000),
+                                        "symptoms": symptomsForCurrentEcg.joined(separator: ",")
+                                    ])
+                                    if(i == ecgSamples.count){
+                                        result(returnDict)
+                                        return
+                                    }
+                                }
+                            }
+                            self.healthStore.execute(symptomQuery)
+                        }
+                    }
+                    else {
+                        returnDict.append( [
+                            "average": ecgSample.averageHeartRate?.doubleValue(for: heartRateUnit) ?? 0.0,
+                            "samplingFrequency": ecgSample.samplingFrequency?.doubleValue(for: HKUnit.hertz()) ?? 0.0,
+                            "classification": ecgSample.classification.rawValue,
+                            "date_from": Int(ecgSample.startDate.timeIntervalSince1970 * 1000),
+                            "date_to": Int(ecgSample.endDate.timeIntervalSince1970 * 1000),
+                            "symptoms": ""
+                        ])
+                        if(i == ecgSamples.count){
+                            result(returnDict)
+                            return
+                        }
+                    }
+                }
             }
             healthStore.execute(ecgQuery)
             return
@@ -405,6 +446,17 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
             categoryTypes[HIGH_HEART_RATE_EVENT] = .highHeartRateEvent
             categoryTypes[LOW_HEART_RATE_EVENT] = .lowHeartRateEvent
             categoryTypes[IRREGULAR_HEART_RATE_EVENT] = .irregularHeartRhythmEvent
+        }
+        if #available(iOS 14.0, *) {
+            ecgSympoms = [
+                HKCategoryTypeIdentifier.rapidPoundingOrFlutteringHeartbeat,
+                HKCategoryTypeIdentifier.skippedHeartbeat,
+                HKCategoryTypeIdentifier.fatigue,
+                HKCategoryTypeIdentifier.shortnessOfBreath,
+                HKCategoryTypeIdentifier.chestTightnessOrPain,
+                HKCategoryTypeIdentifier.fainting,
+                HKCategoryTypeIdentifier.dizziness,
+            ]
         }
     }
 }
