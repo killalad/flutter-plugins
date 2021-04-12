@@ -150,7 +150,6 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                 var returnDict = [NSDictionary]()
                 var i = 0
                 for ecgSample in ecgSamples {
-                    i += 1
                     print(ecgSample)
                     if(ecgSample.symptomsStatus.rawValue == 2) {
                         
@@ -163,6 +162,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                                     symptomsForCurrentEcg.insert("\(samples!.first!.sampleType)")
                                 }
                                 if(j == self.ecgSympoms.count) {
+                                    i += 1
                                     returnDict.append( [
                                         "average": ecgSample.averageHeartRate?.doubleValue(for: heartRateUnit) ?? 0.0,
                                         "samplingFrequency": ecgSample.samplingFrequency?.doubleValue(for: HKUnit.hertz()) ?? 0.0,
@@ -181,6 +181,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                         }
                     }
                     else {
+                        i += 1
                         returnDict.append( [
                             "average": ecgSample.averageHeartRate?.doubleValue(for: heartRateUnit) ?? 0.0,
                             "samplingFrequency": ecgSample.samplingFrequency?.doubleValue(for: HKUnit.hertz()) ?? 0.0,
