@@ -111,7 +111,10 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                 typesToRequest.insert(HKObjectType.categoryType(forIdentifier: categoryTypes[keyString]!)!)
             }
         }
-        
+        if(typesToRequest.isEmpty) {
+            result(FlutterError(code: "FlutterHealth", message: "No types to request", details: nil))
+            return
+        }
         if #available(iOS 11.0, *) {
             healthStore.requestAuthorization(toShare: nil, read: typesToRequest) { (success, error) in
                 result(success)
