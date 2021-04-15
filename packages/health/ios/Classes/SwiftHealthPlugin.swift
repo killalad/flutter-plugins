@@ -323,7 +323,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                 })
                 return
             }
-            HKHealthStore().execute(query)
+            healthStore.execute(query)
             return
         } else if (categoryTypes[dataTypeKey] != nil) {
             let query = HKSampleQuery(sampleType: HKObjectType.categoryType(forIdentifier: categoryTypes[dataTypeKey]!)!, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: [sortDescriptor]) {
@@ -343,7 +343,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                 })
                 return
             }
-            HKHealthStore().execute(query)
+            healthStore.execute(query)
             return
         }
         else {
