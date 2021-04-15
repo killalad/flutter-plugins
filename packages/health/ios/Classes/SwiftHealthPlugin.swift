@@ -153,37 +153,37 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                 var returnDict = [NSDictionary]()
                 var i = 0
                 for ecgSample in ecgSamples {
-                    print(ecgSample)
-                    if(ecgSample.symptomsStatus.rawValue == 2) {
+                    // print(ecgSample)
+                    // if(ecgSample.symptomsStatus.rawValue == 2) {
                         
-                        var symptomsForCurrentEcg = Set<String>()
-                        var j = 0
-                        for symptom in self.ecgSympoms {
-                            let symptomQuery = HKSampleQuery(sampleType: HKSampleType.categoryType(forIdentifier:symptom)!, predicate: HKQuery.predicateForObjectsAssociated(electrocardiogram: ecgSample), limit: 1, sortDescriptors: nil) { (query, samples,error) in
-                                j += 1
-                                if(samples?.first != nil) {
-                                    symptomsForCurrentEcg.insert("\(samples!.first!.sampleType)")
-                                }
-                                if(j == self.ecgSympoms.count) {
-                                    i += 1
-                                    returnDict.append( [
-                                        "average": ecgSample.averageHeartRate?.doubleValue(for: heartRateUnit) ?? 0.0,
-                                        "samplingFrequency": ecgSample.samplingFrequency?.doubleValue(for: HKUnit.hertz()) ?? 0.0,
-                                        "classification": ecgSample.classification.rawValue,
-                                        "date_from": Int(ecgSample.startDate.timeIntervalSince1970 * 1000),
-                                        "date_to": Int(ecgSample.endDate.timeIntervalSince1970 * 1000),
-                                        "symptoms": symptomsForCurrentEcg.joined(separator: ",")
-                                    ])
-                                    if(i == ecgSamples.count){
-                                        result(returnDict)
-                                        return
-                                    }
-                                }
-                            }
-                            self.healthStore.execute(symptomQuery)
-                        }
-                    }
-                    else {
+                    //     var symptomsForCurrentEcg = Set<String>()
+                    //     var j = 0
+                    //     for symptom in self.ecgSympoms {
+                    //         let symptomQuery = HKSampleQuery(sampleType: HKSampleType.categoryType(forIdentifier:symptom)!, predicate: HKQuery.predicateForObjectsAssociated(electrocardiogram: ecgSample), limit: 1, sortDescriptors: nil) { (query, samples,error) in
+                    //             j += 1
+                    //             if(samples?.first != nil) {
+                    //                 symptomsForCurrentEcg.insert("\(samples!.first!.sampleType)")
+                    //             }
+                    //             if(j == self.ecgSympoms.count) {
+                    //                 i += 1
+                    //                 returnDict.append( [
+                    //                     "average": ecgSample.averageHeartRate?.doubleValue(for: heartRateUnit) ?? 0.0,
+                    //                     "samplingFrequency": ecgSample.samplingFrequency?.doubleValue(for: HKUnit.hertz()) ?? 0.0,
+                    //                     "classification": ecgSample.classification.rawValue,
+                    //                     "date_from": Int(ecgSample.startDate.timeIntervalSince1970 * 1000),
+                    //                     "date_to": Int(ecgSample.endDate.timeIntervalSince1970 * 1000),
+                    //                     "symptoms": symptomsForCurrentEcg.joined(separator: ",")
+                    //                 ])
+                    //                 if(i == ecgSamples.count){
+                    //                     result(returnDict)
+                    //                     return
+                    //                 }
+                    //             }
+                    //         }
+                    //         self.healthStore.execute(symptomQuery)
+                    //     }
+                    // }
+                    // else {
                         i += 1
                         returnDict.append( [
                             "average": ecgSample.averageHeartRate?.doubleValue(for: heartRateUnit) ?? 0.0,
@@ -197,7 +197,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                             result(returnDict)
                             return
                         }
-                    }
+                    // }
                 }
             }
             healthStore.execute(ecgQuery)
